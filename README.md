@@ -215,16 +215,16 @@ let keywords = ["algorithm", "function", "variable", "loop", "condition", "array
 
 ## 📄 License
 
-This project is developed for educational purposes. Please ensure compliance with your institution's academic integrity policies when deploying automated grading systems.
+This project is developed for educational purpose and licenced under MIT LICENCE 
 
 ## 🆘 Support
 
 ### Known Issues
-- SwiftUI requires iOS/macOS environment (not available in Linux-based Replit)
+- SwiftUI requires iOS/macOS environment 
 - Core ML models require iOS device or simulator for full functionality
 
 ### Development Environment
-For full iOS development experience, use Xcode on macOS. The Replit environment is suitable for Swift syntax learning and basic testing.
+For full iOS development experience, use Xcode on macOS.
 
 ## 📈 Performance
 
@@ -236,4 +236,4 @@ For full iOS development experience, use Xcode on macOS. The Replit environment 
 
 ---
 
-**Built with ❤️ using Swift and SwiftUI**
+**Built with ❤️ using Swift and SwiftUI,kotlin, flutter/Dart**
