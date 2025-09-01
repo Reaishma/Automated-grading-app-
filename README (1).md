@@ -7,6 +7,9 @@ A comprehensive multi-platform application that provides automated grading capab
 - **Kotlin**: Android/JVM compatible application  
 - **Flutter/Dart**: Cross-platform mobile application
 
+#🚀 Live Demo 
+  **View live** https://reaishma.github.io/Automated-grading-app-/
+
 ## 📱 Features
 
 ### Core Functionality
