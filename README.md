@@ -1,5 +1,5 @@
 
-# Automated Grading App
+# Smart Grading App
 
 A comprehensive multi-platform application that provides automated grading capabilities for educational assignments using machine learning techniques. Available in three implementations:
 
