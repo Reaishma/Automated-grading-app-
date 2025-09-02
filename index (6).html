@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Grading Platform</title>
+    <style>
+        :root {
+            --primary-dark: #0f0f23;
+            --secondary-dark: #1a1a2e;
+            --accent-dark: #16213e;
+            --card-bg: #1e1e2e;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --accent-blue: #4285f4;
+            --accent-green: #34a853;
+            --accent-orange: #fbbc04;
+            --accent-red: #ea4335;
+            --accent-purple: #9c27b0;
+            --gradient-primary: linear-gradient(135deg, #800020 0%, #dc2626 100%);
+            --gradient-success: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            --gradient-warning: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --gradient-danger: linear-gradient(135deg, #dc2626 0%, #800020 100%);
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .app-header {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .app-header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* Navigation Styles */
+        .nav-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            min-width: max-content;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(128, 0, 32, 0.4);
+        }
+
+        .nav-tab .icon {
+            font-size: 1.2rem;
+        }
+
+        /* Content Styles */
+        .tab-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 600px;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--accent-dark);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: var(--gradient-success);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: var(--gradient-warning);
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: var(--gradient-danger);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        /* Cards and Content */
+        .content-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--accent-dark);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--primary-dark);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(128, 0, 32, 0.4);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background: var(--gradient-danger);
+            color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Item Lists */
+        .item-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .item {
+            background: var(--primary-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .item:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .item-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .item-meta {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        /* Badges and Status */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(52, 168, 83, 0.2);
+            color: #34a853;
+        }
+
+        .badge-warning {
+            background: rgba(251, 188, 4, 0.2);
+            color: #fbbc04;
+        }
+
+        .badge-danger {
+            background: rgba(234, 67, 53, 0.2);
+            color: #ea4335;
+        }
+
+        .badge-info {
+            background: rgba(66, 133, 244, 0.2);
+            color: #4285f4;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Grading Results */
+        .score-display {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .score-excellent {
+            background: rgba(52, 168, 83, 0.2);
+            color: #34a853;
+        }
+
+        .score-good {
+            background: rgba(251, 188, 4, 0.2);
+            color: #fbbc04;
+        }
+
+        .score-poor {
+            background: rgba(234, 67, 53, 0.2);
+            color: #ea4335;
+        }
+
+        .feedback-box {
+            background: var(--primary-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .submission-content {
+            background: var(--primary-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        /* Recent Activity */
+        .activity-feed {
+            background: var(--accent-dark);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--primary-dark);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .activity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-icon {
+            background: var(--accent-blue);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1rem;
+            }
+
+            .app-header {
+                padding: 1.5rem;
+            }
+
+            .tab-content {
+                padding: 1.5rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .nav-tab {
+                min-width: auto;
+                text-align: left;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .app-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus States */
+        .btn:focus,
+        .nav-tab:focus,
+        .form-input:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* Dark Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-dark);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>🎓 Smart Grading Platform</h1>
+            <p>AI-Powered Educational Assessment & Analytics</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('dashboard')" data-tab="dashboard">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('students')" data-tab="students">
+                    <span class="icon">👥</span>
+                    <span>Students</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('assignments')" data-tab="assignments">
+                    <span class="icon">📝</span>
+                    <span>Assignments</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('grading')" data-tab="grading">
+                    <span class="icon">✅</span>
+                    <span>Grading</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('grades')" data-tab="grades">
+                    <span class="icon">🧮</span>
+                    <span>Grade Book</span>
+                </button>
+                <button class="nav-tab" onclick="showTab('analytics')" data-tab="analytics">
+                    <span class="icon">📈</span>
+                    <span>Analytics</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="tab-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-pane active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number" id="student-count">0</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-number" id="assignment-count">0</div>
+                        <div class="stat-label">Active Assignments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📄</div>
+                        <div class="stat-number" id="submission-count">0</div>
+                        <div class="stat-label">Submissions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-number" id="average-grade">0</div>
+                        <div class="stat-label">Average Grade</div>
+                    </div>
+                </div>
+
+                <div class="activity-feed">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">📈 Recent Activity</h3>
+                    <div id="recent-activities">
+                        <div class="activity-item">
+                            <div class="activity-icon">📚</div>
+                            <div class="activity-content">
+                                <div class="activity-title">Welcome to Smart Grading Platform</div>
+                                <div class="activity-time">System initialized</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div id="students" class="tab-pane">
+                <div class="card-header">
+                    <h2 class="card-title">👥 Student Management</h2>
+                    <button class="btn btn-primary" onclick="openStudentModal()">
+                        <span>+</span> Add Student
+                    </button>
+                </div>
+                <div class="item-list" id="students-list">
+                    <!-- Students will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Assignments Tab -->
+            <div id="assignments" class="tab-pane">
+                <div class="card-header">
+                    <h2 class="card-title">📝 Assignment Management</h2>
+                    <button class="btn btn-primary" onclick="openAssignmentModal()">
+                        <span>+</span> Create Assignment
+                    </button>
+                </div>
+                <div class="item-list" id="assignments-list">
+                    <!-- Assignments will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Grading Tab -->
+            <div id="grading" class="tab-pane">
+                <div class="card-header">
+                    <h2 class="card-title">✅ Grading Center</h2>
+                    <button class="btn btn-success" onclick="gradeAllSubmissions()">
+                        <span>🚀</span> Grade All Submissions
+                    </button>
+                </div>
+                
+                <div class="loading" id="grading-loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Processing submissions with AI...</p>
+                </div>
+                
+                <div class="item-list" id="submissions-list">
+                    <!-- Submissions will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Grade Book Tab -->
+            <div id="grades" class="tab-pane">
+                <div class="card-header">
+                    <h2 class="card-title">🧮 Grade Book - Weighted Final Grades</h2>
+                    <button class="btn btn-primary" onclick="showGradeSettings()">
+                        ⚙️ Grade Settings
+                    </button>
+                </div>
+                
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 class="card-title">📊 Assignment Weights & Curves</h3>
+                    <div id="assignment-weights-list">
+                        <!-- Assignment weights will be populated -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">📋 Student Final Grades</h3>
+                    <div id="final-grades-list">
+                        <!-- Final grades will be populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-pane">
+                <h2 class="card-title" style="margin-bottom: 2rem;">📈 Analytics & Reports</h2>
+                
+                <div class="content-grid">
+                    <div class="card">
+                        <h3 class="card-title">Performance Overview</h3>
+                        <div id="performance-chart">
+                            <div style="height: 200px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                                Analytics charts will be displayed here
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="card-title">Grade Distribution</h3>
+                        <div id="grade-distribution">
+                            <!-- Grade distribution will be populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Modal -->
+    <div class="modal" id="student-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Student</h3>
+                <button class="modal-close" onclick="closeModal('student-modal')">&times;</button>
+            </div>
+            <form id="student-form" onsubmit="addStudent(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" name="name" required 
+                           placeholder="Enter student's full name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" name="email" required 
+                           placeholder="student@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Student ID</label>
+                    <input type="text" class="form-input" name="studentId" required 
+                           placeholder="Enter student ID">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Course/Class</label>
+                    <input type="text" class="form-input" name="course" required 
+                           placeholder="Enter course or class name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Enrollment Date</label>
+                    <input type="date" class="form-input" name="enrollmentDate" required>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('student-modal')">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Add Student
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div class="modal" id="assignment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Assignment</h3>
+                <button class="modal-close" onclick="closeModal('assignment-modal')">&times;</button>
+            </div>
+            <form id="assignment-form" onsubmit="addAssignment(event)">
+                <div class="form-group">
+                    <label class="form-label">Assignment Title</label>
+                    <input type="text" class="form-input" name="title" required 
+                           placeholder="Enter assignment title">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input form-textarea" name="description" required 
+                              placeholder="Describe the assignment requirements and objectives"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assignment Type</label>
+                    <select class="form-input form-select" name="type" required>
+                        <option value="">Select assignment type</option>
+                        <option value="essay">Essay</option>
+                        <option value="quiz">Quiz</option>
+                        <option value="project">Project</option>
+                        <option value="presentation">Presentation</option>
+                        <option value="coding">Coding Assignment</option>
+                        <option value="research">Research Paper</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Maximum Score</label>
+                    <input type="number" class="form-input" name="maxScore" required 
+                           min="1" max="1000" placeholder="100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Due Date</label>
+                    <input type="datetime-local" class="form-input" name="dueDate" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Course</label>
+                    <input type="text" class="form-input" name="course" required 
+                           placeholder="Course name or code">
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('assignment-modal')">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Create Assignment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Data Models
+        class Student {
+            constructor(name, email, studentId, course, enrollmentDate) {
+                this.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                this.name = name;
+                this.email = email;
+                this.studentId = studentId;
+                this.course = course;
+                this.enrollmentDate = enrollmentDate;
+                this.createdAt = new Date();
+                this.totalSubmissions = 0;
+                this.averageGrade = 0;
+            }
+        }
+
+        class Assignment {
+            constructor(title, description, type, maxScore, dueDate, course) {
+                this.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                this.title = title;
+                this.description = description;
+                this.type = type;
+                this.maxScore = parseInt(maxScore);
+                this.dueDate = new Date(dueDate);
+                this.course = course;
+                this.createdAt = new Date();
+                this.submissions = [];
+                this.averageScore = 0;
+                this.weight = 1.0; // Default weight for grade calculations
+                this.curveType = 'none'; // none, linear, square_root, bell_curve
+                this.curveParameters = {}; // Additional curve parameters
+            }
+        }
+
+        class Submission {
+            constructor(studentId, assignmentId, content) {
+                this.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                this.studentId = studentId;
+                this.assignmentId = assignmentId;
+                this.content = content;
+                this.submissionDate = new Date();
+                this.score = null;
+                this.feedback = null;
+                this.graded = false;
+            }
+        }
+
+        // Grade Calculation Engine with Weighted Averages and Curves
+        class GradeCalculationEngine {
+            static calculateWeightedAverage(studentId, assignments, submissions, grades) {
+                let totalWeightedScore = 0;
+                let totalWeight = 0;
+                let hasValidGrades = false;
+
+                assignments.forEach(assignment => {
+                    const submissionKey = `${studentId}-${assignment.id}`;
+                    const rawScore = grades[submissionKey];
+                    
+                    if (rawScore !== undefined && rawScore !== null) {
+                        const curvedScore = this.applyCurve(rawScore, assignment);
+                        const percentage = (curvedScore / assignment.maxScore) * 100;
+                        
+                        totalWeightedScore += percentage * assignment.weight;
+                        totalWeight += assignment.weight;
+                        hasValidGrades = true;
+                    }
+                });
+
+                return hasValidGrades && totalWeight > 0 ? totalWeightedScore / totalWeight : null;
+            }
+
+            static applyCurve(rawScore, assignment) {
+                const percentage = (rawScore / assignment.maxScore) * 100;
+                
+                switch (assignment.curveType) {
+                    case 'linear':
+                        return this.applyLinearCurve(rawScore, assignment);
+                    case 'square_root':
+                        return this.applySquareRootCurve(rawScore, assignment);
+                    case 'bell_curve':
+                        return this.applyBellCurve(rawScore, assignment);
+                    case 'boost_low':
+                        return this.applyBoostLowCurve(rawScore, assignment);
+                    default:
+                        return rawScore; // No curve
+                }
+            }
+
+            static applyLinearCurve(rawScore, assignment) {
+                // Linear curve: add fixed points or percentage
+                const { addPoints = 0, addPercentage = 0 } = assignment.curveParameters;
+                let curvedScore = rawScore + addPoints + (rawScore * addPercentage / 100);
+                return Math.min(curvedScore, assignment.maxScore);
+            }
+
+            static applySquareRootCurve(rawScore, assignment) {
+                // Square root curve: helpful for very low scores
+                const percentage = (rawScore / assignment.maxScore) * 100;
+                const curvedPercentage = Math.sqrt(percentage) * 10;
+                return Math.min((curvedPercentage * assignment.maxScore) / 100, assignment.maxScore);
+            }
+
+            static applyBoostLowCurve(rawScore, assignment) {
+                // Boost low scores more than high scores
+                const percentage = (rawScore / assignment.maxScore) * 100;
+                const { threshold = 70, boostFactor = 1.2 } = assignment.curveParameters;
+                
+                if (percentage < threshold) {
+                    const boost = (threshold - percentage) * 0.3;
+                    const curvedPercentage = Math.min(percentage + boost, 100);
+                    return (curvedPercentage * assignment.maxScore) / 100;
+                }
+                return rawScore;
+            }
+
+            static applyBellCurve(rawScore, assignment) {
+                // Bell curve normalization - requires class statistics
+                const { targetMean = 85, targetStdDev = 10 } = assignment.curveParameters;
+                // This would need class statistics to implement properly
+                // For now, return a simple adjustment
+                const percentage = (rawScore / assignment.maxScore) * 100;
+                const adjustment = (targetMean - 75) * 0.1; // Simple adjustment
+                const curvedPercentage = Math.min(Math.max(percentage + adjustment, 0), 100);
+                return (curvedPercentage * assignment.maxScore) / 100;
+            }
+
+            static calculateLetterGrade(percentage) {
+                if (percentage >= 97) return 'A+';
+                if (percentage >= 93) return 'A';
+                if (percentage >= 90) return 'A-';
+                if (percentage >= 87) return 'B+';
+                if (percentage >= 83) return 'B';
+                if (percentage >= 80) return 'B-';
+                if (percentage >= 77) return 'C+';
+                if (percentage >= 73) return 'C';
+                if (percentage >= 70) return 'C-';
+                if (percentage >= 67) return 'D+';
+                if (percentage >= 63) return 'D';
+                if (percentage >= 60) return 'D-';
+                return 'F';
+            }
+
+            static calculateGPA(percentage) {
+                if (percentage >= 97) return 4.0;
+                if (percentage >= 93) return 4.0;
+                if (percentage >= 90) return 3.7;
+                if (percentage >= 87) return 3.3;
+                if (percentage >= 83) return 3.0;
+                if (percentage >= 80) return 2.7;
+                if (percentage >= 77) return 2.3;
+                if (percentage >= 73) return 2.0;
+                if (percentage >= 70) return 1.7;
+                if (percentage >= 67) return 1.3;
+                if (percentage >= 63) return 1.0;
+                if (percentage >= 60) return 0.7;
+                return 0.0;
+            }
+
+            static getGradeBreakdown(studentId, assignments, submissions, grades) {
+                const breakdown = {
+                    assignments: [],
+                    totalWeight: 0,
+                    weightedScore: 0,
+                    finalPercentage: null,
+                    letterGrade: null,
+                    gpa: null
+                };
+
+                assignments.forEach(assignment => {
+                    const submissionKey = `${studentId}-${assignment.id}`;
+                    const rawScore = grades[submissionKey];
+                    
+                    if (rawScore !== undefined && rawScore !== null) {
+                        const curvedScore = this.applyCurve(rawScore, assignment);
+                        const percentage = (curvedScore / assignment.maxScore) * 100;
+                        
+                        breakdown.assignments.push({
+                            title: assignment.title,
+                            rawScore: rawScore,
+                            curvedScore: curvedScore,
+                            maxScore: assignment.maxScore,
+                            percentage: percentage,
+                            weight: assignment.weight,
+                            curveType: assignment.curveType,
+                            contribution: percentage * assignment.weight
+                        });
+                        
+                        breakdown.totalWeight += assignment.weight;
+                        breakdown.weightedScore += percentage * assignment.weight;
+                    }
+                });
+
+                if (breakdown.totalWeight > 0) {
+                    breakdown.finalPercentage = breakdown.weightedScore / breakdown.totalWeight;
+                    breakdown.letterGrade = this.calculateLetterGrade(breakdown.finalPercentage);
+                    breakdown.gpa = this.calculateGPA(breakdown.finalPercentage);
+                }
+
+                return breakdown;
+            }
+        }
+
+        // Enhanced Grading Engine
+        class AdvancedGradingEngine {
+            static keywords = {
+                programming: ['algorithm', 'function', 'variable', 'loop', 'array', 'object', 'class', 'method', 'recursion', 'complexity'],
+                essay: ['analysis', 'argument', 'evidence', 'conclusion', 'thesis', 'paragraph', 'structure', 'example', 'research', 'citation'],
+                science: ['hypothesis', 'experiment', 'data', 'observation', 'theory', 'method', 'analysis', 'result', 'conclusion', 'variable'],
+                math: ['equation', 'formula', 'calculation', 'proof', 'theorem', 'solution', 'graph', 'function', 'derivative', 'integral']
+            };
+
+            static gradeSubmission(submission, assignment) {
+                const content = submission.content.toLowerCase();
+                const contentLength = submission.content.length;
+                const words = content.split(/\s+/).filter(w => w.length > 0);
+                const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+
+                // Determine assignment category for keyword matching
+                const category = this.getAssignmentCategory(assignment.type);
+                const relevantKeywords = this.keywords[category] || this.keywords.essay;
+
+                // Scoring criteria (more sophisticated)
+                let scores = {
+                    length: this.calculateLengthScore(contentLength, assignment.type),
+                    keywords: this.calculateKeywordScore(content, relevantKeywords),
+                    structure: this.calculateStructureScore(sentences, words),
+                    complexity: this.calculateComplexityScore(content, words),
+                    coherence: this.calculateCoherenceScore(sentences)
+                };
+
+                // Weighted scoring based on assignment type
+                const weights = this.getWeights(assignment.type);
+                const totalScore = Object.keys(scores).reduce((total, key) => {
+                    return total + (scores[key] * weights[key]);
+                }, 0) * assignment.maxScore;
+
+                const feedback = this.generateDetailedFeedback(scores, assignment, contentLength, words.length);
+
+                return { 
+                    score: Math.round(totalScore * 100) / 100, 
+                    feedback: feedback,
+                    breakdown: scores
+                };
+            }
+
+            static getAssignmentCategory(type) {
+                const mapping = {
+                    'coding': 'programming',
+                    'essay': 'essay',
+                    'research': 'essay',
+                    'quiz': 'science',
+                    'project': 'science'
+                };
+                return mapping[type] || 'essay';
+            }
+
+            static getWeights(type) {
+                const weights = {
+                    'essay': { length: 0.2, keywords: 0.3, structure: 0.2, complexity: 0.15, coherence: 0.15 },
+                    'coding': { length: 0.15, keywords: 0.4, structure: 0.15, complexity: 0.2, coherence: 0.1 },
+                    'research': { length: 0.25, keywords: 0.35, structure: 0.15, complexity: 0.15, coherence: 0.1 },
+                    'quiz': { length: 0.1, keywords: 0.5, structure: 0.1, complexity: 0.2, coherence: 0.1 },
+                    'project': { length: 0.2, keywords: 0.3, structure: 0.2, complexity: 0.15, coherence: 0.15 }
+                };
+                return weights[type] || weights.essay;
+            }
+
+            static calculateLengthScore(length, type) {
+                const targets = {
+                    'essay': 1000,
+                    'coding': 500,
+                    'research': 2000,
+                    'quiz': 200,
+                    'project': 1500
+                };
+                const target = targets[type] || 1000;
+                return Math.min(length / target, 1.0);
+            }
+
+            static calculateKeywordScore(content, keywords) {
+                const foundKeywords = keywords.filter(keyword => content.includes(keyword));
+                return Math.min(foundKeywords.length / keywords.length, 1.0);
+            }
+
+            static calculateStructureScore(sentences, words) {
+                if (sentences.length === 0) return 0;
+                const avgWordsPerSentence = words.length / sentences.length;
+                const idealRange = [10, 25];
+                if (avgWordsPerSentence >= idealRange[0] && avgWordsPerSentence <= idealRange[1]) {
+                    return 1.0;
+                }
+                return Math.max(0.3, 1.0 - Math.abs(avgWordsPerSentence - 17.5) / 17.5);
+            }
+
+            static calculateComplexityScore(content, words) {
+                const longWords = words.filter(word => word.length > 6).length;
+                const complexityRatio = longWords / words.length;
+                return Math.min(complexityRatio * 2, 1.0);
+            }
+
+            static calculateCoherenceScore(sentences) {
+                // Simple coherence based on sentence transitions
+                const transitionWords = ['however', 'therefore', 'furthermore', 'moreover', 'additionally', 'consequently'];
+                const transitions = transitionWords.filter(word => 
+                    sentences.some(sentence => sentence.toLowerCase().includes(word))
+                ).length;
+                return Math.min(transitions / 3, 1.0);
+            }
+
+            static generateDetailedFeedback(scores, assignment, contentLength, wordCount) {
+                const percentage = Object.values(scores).reduce((a, b) => a + b, 0) / Object.keys(scores).length;
+                
+                let feedback = `📊 GRADING ANALYSIS\n`;
+                feedback += `Assignment: ${assignment.title}\n`;
+                feedback += `Type: ${assignment.type}\n`;
+                feedback += `Content Length: ${contentLength} characters (${wordCount} words)\n\n`;
+
+                // Overall assessment
+                if (percentage >= 0.9) {
+                    feedback += `🌟 EXCELLENT WORK!\nYour submission demonstrates exceptional understanding and quality.`;
+                } else if (percentage >= 0.8) {
+                    feedback += `🎉 GREAT JOB!\nStrong work with room for minor improvements.`;
+                } else if (percentage >= 0.7) {
+                    feedback += `👍 GOOD EFFORT!\nSolid submission with some areas for enhancement.`;
+                } else if (percentage >= 0.6) {
+                    feedback += `📚 SATISFACTORY\nMeets basic requirements but could benefit from more development.`;
+                } else {
+                    feedback += `⚠️ NEEDS IMPROVEMENT\nRequires significant revision to meet expectations.`;
+                }
+
+                feedback += `\n\n📈 DETAILED BREAKDOWN:\n`;
+                feedback += `• Content Length: ${(scores.length * 100).toFixed(1)}%\n`;
+                feedback += `• Technical Terms: ${(scores.keywords * 100).toFixed(1)}%\n`;
+                feedback += `• Structure & Flow: ${(scores.structure * 100).toFixed(1)}%\n`;
+                feedback += `• Complexity: ${(scores.complexity * 100).toFixed(1)}%\n`;
+                feedback += `• Coherence: ${(scores.coherence * 100).toFixed(1)}%\n`;
+
+                feedback += `\n🎯 RECOMMENDATIONS:\n`;
+                if (scores.length < 0.7) {
+                    feedback += `• Expand your response with more detailed explanations and examples\n`;
+                }
+                if (scores.keywords < 0.7) {
+                    feedback += `• Include more relevant technical terminology and key concepts\n`;
+                }
+                if (scores.structure < 0.7) {
+                    feedback += `• Improve sentence structure and paragraph organization\n`;
+                }
+                if (scores.complexity < 0.7) {
+                    feedback += `• Use more sophisticated vocabulary and complex ideas\n`;
+                }
+                if (scores.coherence < 0.7) {
+                    feedback += `• Add transition words to improve flow between ideas\n`;
+                }
+
+                return feedback;
+            }
+        }
+
+        // Enhanced Data Manager
+        class GradingDataManager {
+            constructor() {
+                this.students = [];
+                this.assignments = [];
+                this.submissions = [];
+                this.activities = [];
+                this.grades = {}; // Store individual assignment grades
+                this.loadSampleData();
+            }
+
+            loadSampleData() {
+                // Sample students
+                const sampleStudents = [
+                    new Student("Alice Johnson", "alice.johnson@university.edu", "CS2024001", "Computer Science", "2024-01-15"),
+                    new Student("Bob Smith", "bob.smith@university.edu", "CS2024002", "Computer Science", "2024-01-15"),
+                    new Student("Carol Davis", "carol.davis@university.edu", "ENG2024001", "English Literature", "2024-01-20"),
+                    new Student("David Wilson", "david.wilson@university.edu", "MATH2024001", "Mathematics", "2024-01-18"),
+                    new Student("Emma Brown", "emma.brown@university.edu", "SCI2024001", "Biology", "2024-01-22")
+                ];
+                
+                this.students = sampleStudents;
+
+                // Sample assignments with weights and curves
+                const sampleAssignments = [
+                    new Assignment(
+                        "Algorithm Analysis Essay",
+                        "Analyze the time and space complexity of quicksort algorithm. Compare with other sorting algorithms and discuss real-world applications.",
+                        "essay",
+                        100,
+                        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+                        "Computer Science"
+                    ),
+                    new Assignment(
+                        "Data Structures Implementation",
+                        "Implement a binary search tree with insertion, deletion, and traversal methods. Include complexity analysis.",
+                        "coding",
+                        150,
+                        new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+                        "Computer Science"
+                    ),
+                    new Assignment(
+                        "Literary Analysis: Modern Poetry",
+                        "Analyze the themes and literary devices in contemporary poetry. Choose 3 poems and provide detailed analysis.",
+                        "research",
+                        120,
+                        new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+                        "English Literature"
+                    )
+                ];
+
+                // Set up weights and curves for assignments
+                sampleAssignments[0].weight = 0.3; // Essay worth 30%
+                sampleAssignments[0].curveType = 'boost_low';
+                sampleAssignments[0].curveParameters = { threshold: 75, boostFactor: 1.2 };
+
+                sampleAssignments[1].weight = 0.5; // Implementation worth 50%
+                sampleAssignments[1].curveType = 'linear';
+                sampleAssignments[1].curveParameters = { addPoints: 5, addPercentage: 0 };
+
+                sampleAssignments[2].weight = 0.2; // Research worth 20%
+                sampleAssignments[2].curveType = 'square_root';
+                sampleAssignments[2].curveParameters = {};
+                
+                this.assignments = sampleAssignments;
+
+                // Sample submissions
+                const sampleSubmissions = [
+                    new Submission(
+                        sampleStudents[0].id,
+                        sampleAssignments[0].id,
+                        "Quicksort is a highly efficient divide-and-conquer algorithm that demonstrates excellent average-case performance with O(n log n) time complexity. The algorithm works by selecting a pivot element and partitioning the array around it, recursively sorting the sub-arrays. The space complexity is O(log n) for the recursive call stack in the average case. Compared to other sorting algorithms like merge sort which guarantees O(n log n) but uses O(n) extra space, quicksort is often preferred for its in-place sorting capability. However, quicksort's worst-case time complexity of O(n²) occurs when the pivot is consistently the smallest or largest element, making the algorithm degrade to bubble sort performance. In practice, randomized pivot selection and hybrid approaches like introsort mitigate this issue. Quicksort's cache-friendly nature and low constant factors make it superior to heapsort in most real-world scenarios, despite heapsort's guaranteed O(n log n) performance."
+                    ),
+                    new Submission(
+                        sampleStudents[1].id,
+                        sampleAssignments[0].id,
+                        "Quicksort is fast sorting algorithm. It uses divide and conquer method. The algorithm picks pivot and splits array. Then sorts parts recursively. Time complexity average case is O(n log n). Worst case is O(n²). Space complexity is O(log n). Better than bubble sort and selection sort. Similar to merge sort but uses less memory."
+                    ),
+                    new Submission(
+                        sampleStudents[2].id,
+                        sampleAssignments[2].id,
+                        "Modern poetry reflects the complexity of contemporary life through innovative literary devices and themes. Poets like Ocean Vuong, Claudia Rankine, and Warsan Shire employ fragmented narratives, code-switching, and multimedia elements to address identity, trauma, and social justice. The use of white space as a literary device creates pauses that mirror psychological processing, while enjambment disrupts traditional syntactic boundaries to reflect fractured experiences. These poets challenge conventional poetic forms, incorporating prose poetry and visual elements that engage readers in new ways. The themes of displacement, cultural identity, and intergenerational trauma resonate across diverse voices, creating a tapestry of shared human experience while maintaining unique cultural perspectives."
+                    )
+                ];
+                
+                this.submissions = sampleSubmissions;
+
+                // Sample grades using assignment IDs and student IDs
+                this.grades = {};
+                
+                // Add some sample grades for the students
+                this.grades[`${sampleStudents[0].id}-${sampleAssignments[0].id}`] = 85; // Alice - Essay
+                this.grades[`${sampleStudents[0].id}-${sampleAssignments[1].id}`] = 92; // Alice - Coding
+                this.grades[`${sampleStudents[0].id}-${sampleAssignments[2].id}`] = 88; // Alice - Research
+
+                this.grades[`${sampleStudents[1].id}-${sampleAssignments[0].id}`] = 78; // Bob - Essay
+                this.grades[`${sampleStudents[1].id}-${sampleAssignments[1].id}`] = 85; // Bob - Coding
+
+                this.grades[`${sampleStudents[2].id}-${sampleAssignments[0].id}`] = 95; // Carol - Essay
+                this.grades[`${sampleStudents[2].id}-${sampleAssignments[2].id}`] = 90; // Carol - Research
+
+                // Add activities
+                this.addActivity("👥", "Sample data loaded", "System initialized with 5 students and 3 assignments");
+                this.addActivity("📊", "Grade calculations ready", "Weighted averages and curves configured");
+                
+                this.updateDashboard();
+            }
+
+            addStudent(student) {
+                this.students.push(student);
+                this.addActivity("👤", "New student added", `${student.name} joined ${student.course}`);
+                this.updateDashboard();
+            }
+
+            addAssignment(assignment) {
+                this.assignments.push(assignment);
+                this.addActivity("📝", "Assignment created", `${assignment.title} (${assignment.type})`);
+                this.updateDashboard();
+            }
+
+            addSubmission(submission) {
+                this.submissions.push(submission);
+                const student = this.students.find(s => s.id === submission.studentId);
+                const assignment = this.assignments.find(a => a.id === submission.assignmentId);
+                if (student && assignment) {
+                    this.addActivity("📄", "New submission", `${student.name} submitted ${assignment.title}`);
+                }
+                this.updateDashboard();
+            }
+
+            addActivity(icon, title, description) {
+                this.activities.unshift({
+                    id: Date.now(),
+                    icon: icon,
+                    title: title,
+                    description: description,
+                    timestamp: new Date()
+                });
+                
+                // Keep only last 10 activities
+                if (this.activities.length > 10) {
+                    this.activities.pop();
+                }
+            }
+
+            gradeSubmission(submissionId) {
+                const submission = this.submissions.find(s => s.id === submissionId);
+                const assignment = this.assignments.find(a => a.id === submission.assignmentId);
+                
+                if (assignment && submission) {
+                    const result = AdvancedGradingEngine.gradeSubmission(submission, assignment);
+                    submission.score = result.score;
+                    submission.feedback = result.feedback;
+                    submission.graded = true;
+                    
+                    const student = this.students.find(s => s.id === submission.studentId);
+                    if (student) {
+                        this.addActivity("✅", "Submission graded", `${student.name}'s work scored ${result.score.toFixed(1)}/${assignment.maxScore}`);
+                    }
+                }
+            }
+
+            async gradeAllSubmissions() {
+                const ungradedSubmissions = this.submissions.filter(s => !s.graded);
+                
+                for (let i = 0; i < ungradedSubmissions.length; i++) {
+                    this.gradeSubmission(ungradedSubmissions[i].id);
+                    // Simulate processing delay
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                this.addActivity("🚀", "Batch grading completed", `${ungradedSubmissions.length} submissions processed`);
+                this.updateDashboard();
+            }
+
+            updateDashboard() {
+                document.getElementById('student-count').textContent = this.students.length;
+                document.getElementById('assignment-count').textContent = this.assignments.length;
+                document.getElementById('submission-count').textContent = this.submissions.length;
+                
+                // Calculate weighted average grade across all students
+                let totalWeightedGrades = 0;
+                let studentsWithGrades = 0;
+                
+                this.students.forEach(student => {
+                    const finalGrade = GradeCalculationEngine.calculateWeightedAverage(
+                        student.id, this.assignments, this.submissions, this.grades
+                    );
+                    if (finalGrade !== null) {
+                        totalWeightedGrades += finalGrade;
+                        studentsWithGrades++;
+                    }
+                });
+                
+                const avgGrade = studentsWithGrades > 0 ? totalWeightedGrades / studentsWithGrades : 0;
+                document.getElementById('average-grade').textContent = avgGrade.toFixed(1);
+                
+                // Update recent activities
+                this.updateActivities();
+            }
+
+            updateActivities() {
+                const container = document.getElementById('recent-activities');
+                container.innerHTML = '';
+                
+                this.activities.slice(0, 5).forEach(activity => {
+                    const activityElement = document.createElement('div');
+                    activityElement.className = 'activity-item';
+                    activityElement.innerHTML = `
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.title}</div>
+                            <div class="activity-time">${activity.description} • ${this.formatTimeAgo(activity.timestamp)}</div>
+                        </div>
+                    `;
+                    container.appendChild(activityElement);
+                });
+            }
+
+            formatTimeAgo(date) {
+                const now = new Date();
+                const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+                
+                if (diffInMinutes < 1) return 'Just now';
+                if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+                if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+                return `${Math.floor(diffInMinutes / 1440)}d ago`;
+            }
+        }
+
+        // Global data manager instance
+        let dataManager = new GradingDataManager();
+
+        // UI Functions
+        function showTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+
+            // Load content for the selected tab
+            switch(tabName) {
+                case 'students':
+                    loadStudents();
+                    break;
+                case 'assignments':
+                    loadAssignments();
+                    break;
+                case 'grading':
+                    loadSubmissions();
+                    break;
+                case 'grades':
+                    loadGradeBook();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+            }
+        }
+
+        function loadStudents() {
+            const container = document.getElementById('students-list');
+            container.innerHTML = '';
+
+            if (dataManager.students.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <h3 style="color: var(--text-secondary); margin-bottom: 1rem;">No students enrolled yet</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Start by adding your first student to the platform</p>
+                        <button class="btn btn-primary" onclick="openStudentModal()">
+                            <span>+</span> Add First Student
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            dataManager.students.forEach(student => {
+                const studentSubmissions = dataManager.submissions.filter(s => s.studentId === student.id);
+                const gradedSubmissions = studentSubmissions.filter(s => s.graded);
+                
+                // Calculate weighted final grade
+                const finalGrade = GradeCalculationEngine.calculateWeightedAverage(
+                    student.id, dataManager.assignments, dataManager.submissions, dataManager.grades
+                );
+                const letterGrade = finalGrade ? GradeCalculationEngine.calculateLetterGrade(finalGrade) : 'N/A';
+                const displayGrade = finalGrade ? `${finalGrade.toFixed(1)}% (${letterGrade})` : 'N/A';
+
+                const studentCard = document.createElement('div');
+                studentCard.className = 'item';
+                studentCard.innerHTML = `
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">👤 ${student.name}</div>
+                            <div class="item-meta">
+                                📧 ${student.email} • 🆔 ${student.studentId}<br>
+                                📚 ${student.course} • 📅 Enrolled: ${new Date(student.enrollmentDate).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <span class="badge badge-info">🧮 Final: ${displayGrade}</span>
+                            <span class="badge badge-success">📄 ${studentSubmissions.length} submissions</span>
+                            <button class="btn btn-outline" onclick="viewStudentBreakdown('${student.id}')">📊 Breakdown</button>
+                            <button class="btn btn-danger" onclick="deleteStudent('${student.id}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(studentCard);
+            });
+        }
+
+        function loadAssignments() {
+            const container = document.getElementById('assignments-list');
+            container.innerHTML = '';
+
+            if (dataManager.assignments.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <h3 style="color: var(--text-secondary); margin-bottom: 1rem;">No assignments created yet</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Create your first assignment to start the grading process</p>
+                        <button class="btn btn-primary" onclick="openAssignmentModal()">
+                            <span>+</span> Create First Assignment
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            dataManager.assignments.forEach(assignment => {
+                const submissionCount = dataManager.submissions.filter(s => s.assignmentId === assignment.id).length;
+                const gradedCount = dataManager.submissions.filter(s => s.assignmentId === assignment.id && s.graded).length;
+                const dueDate = new Date(assignment.dueDate);
+                const isOverdue = dueDate < new Date();
+                const dueDateStr = dueDate.toLocaleDateString() + ' ' + dueDate.toLocaleTimeString();
+                const weightPercentage = (assignment.weight * 100).toFixed(0);
+                const curveDisplay = assignment.curveType !== 'none' ? assignment.curveType.replace('_', ' ') : 'none';
+
+                const assignmentCard = document.createElement('div');
+                assignmentCard.className = 'item';
+                assignmentCard.innerHTML = `
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">📝 ${assignment.title}</div>
+                            <div class="item-meta">
+                                📚 ${assignment.course} • 🎯 ${assignment.type} • 🎯 Max: ${assignment.maxScore} • ⚖️ Weight: ${weightPercentage}%<br>
+                                📅 Due: ${dueDateStr} ${isOverdue ? '<span class="badge badge-danger">⏰ Overdue</span>' : ''}<br>
+                                📊 Curve: ${curveDisplay}
+                            </div>
+                            <div style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                ${assignment.description}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <span class="badge badge-info">📄 ${submissionCount} submissions</span>
+                            <span class="badge badge-success">✅ ${gradedCount} graded</span>
+                            <button class="btn btn-outline" onclick="editAssignmentSettings('${assignment.id}')">⚙️ Settings</button>
+                            <button class="btn btn-danger" onclick="deleteAssignment('${assignment.id}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(assignmentCard);
+            });
+        }
+
+        function loadSubmissions() {
+            const container = document.getElementById('submissions-list');
+            container.innerHTML = '';
+
+            if (dataManager.submissions.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <h3 style="color: var(--text-secondary); margin-bottom: 1rem;">No submissions yet</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Students will submit their work here for grading</p>
+                        <button class="btn btn-primary" onclick="simulateSubmission()">
+                            <span>📄</span> Simulate Sample Submission
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            dataManager.submissions.forEach(submission => {
+                const student = dataManager.students.find(s => s.id === submission.studentId);
+                const assignment = dataManager.assignments.find(a => a.id === submission.assignmentId);
+                
+                if (!student || !assignment) return;
+
+                const submissionCard = document.createElement('div');
+                submissionCard.className = 'item';
+                
+                const scoreDisplay = submission.graded 
+                    ? `<span class="score-display ${getScoreClass(submission.score, assignment.maxScore)}">${submission.score.toFixed(1)}/${assignment.maxScore}</span>`
+                    : '<span class="badge badge-warning">⏳ Pending</span>';
+
+                submissionCard.innerHTML = `
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">👤 ${student.name} - 📝 ${assignment.title}</div>
+                            <div class="item-meta">
+                                📅 Submitted: ${submission.submissionDate.toLocaleDateString()} ${submission.submissionDate.toLocaleTimeString()}<br>
+                                📚 Course: ${assignment.course} • 🎯 Type: ${assignment.type}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            ${scoreDisplay}
+                            ${!submission.graded ? `<button class="btn btn-primary" onclick="gradeSubmission('${submission.id}')">✅ Grade Now</button>` : ''}
+                            <button class="btn btn-outline" onclick="viewSubmission('${submission.id}')">👁️ View</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(submissionCard);
+            });
+        }
+
+        function loadAnalytics() {
+            // Placeholder for analytics - would integrate with chart libraries
+            const performanceChart = document.getElementById('performance-chart');
+            const gradeDistribution = document.getElementById('grade-distribution');
+
+            // Simple analytics display
+            const gradedSubmissions = dataManager.submissions.filter(s => s.graded);
+            const avgScore = gradedSubmissions.length > 0 
+                ? gradedSubmissions.reduce((sum, s) => sum + s.score, 0) / gradedSubmissions.length 
+                : 0;
+
+            const gradeRanges = {
+                'A (90-100)': gradedSubmissions.filter(s => s.score >= 90).length,
+                'B (80-89)': gradedSubmissions.filter(s => s.score >= 80 && s.score < 90).length,
+                'C (70-79)': gradedSubmissions.filter(s => s.score >= 70 && s.score < 80).length,
+                'D (60-69)': gradedSubmissions.filter(s => s.score >= 60 && s.score < 70).length,
+                'F (0-59)': gradedSubmissions.filter(s => s.score < 60).length
+            };
+
+            performanceChart.innerHTML = `
+                <div style="padding: 2rem; text-align: center;">
+                    <h4 style="color: var(--text-primary); margin-bottom: 1rem;">📊 Overall Performance</h4>
+                    <div style="font-size: 2rem; color: var(--text-primary); margin-bottom: 0.5rem;">${avgScore.toFixed(1)}%</div>
+                    <div style="color: var(--text-secondary);">Average Score Across All Submissions</div>
+                    <div style="margin-top: 1rem; color: var(--text-secondary);">
+                        Total Submissions: ${dataManager.submissions.length} • Graded: ${gradedSubmissions.length}
+                    </div>
+                </div>
+            `;
+
+            gradeDistribution.innerHTML = `
+                <div style="padding: 1rem;">
+                    ${Object.entries(gradeRanges).map(([grade, count]) => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; padding: 0.5rem; background: var(--primary-dark); border-radius: 4px;">
+                            <span style="color: var(--text-primary);">${grade}</span>
+                            <span style="color: var(--text-secondary);">${count} students</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Modal and Form Functions
+        function openStudentModal() {
+            document.getElementById('student-modal').classList.add('active');
+            // Set default enrollment date to today
+            document.querySelector('input[name="enrollmentDate"]').valueAsDate = new Date();
+        }
+
+        function openAssignmentModal() {
+            document.getElementById('assignment-modal').classList.add('active');
+            // Set default due date to one week from now
+            const oneWeekFromNow = new Date();
+            oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
+            document.querySelector('input[name="dueDate"]').value = oneWeekFromNow.toISOString().slice(0, 16);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function addStudent(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const student = new Student(
+                formData.get('name'),
+                formData.get('email'),
+                formData.get('studentId'),
+                formData.get('course'),
+                formData.get('enrollmentDate')
+            );
+
+            dataManager.addStudent(student);
+            closeModal('student-modal');
+            event.target.reset();
+            
+            // Refresh students view if currently active
+            if (document.getElementById('students').classList.contains('active')) {
+                loadStudents();
+            }
+        }
+
+        function addAssignment(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const assignment = new Assignment(
+                formData.get('title'),
+                formData.get('description'),
+                formData.get('type'),
+                formData.get('maxScore'),
+                formData.get('dueDate'),
+                formData.get('course')
+            );
+
+            dataManager.addAssignment(assignment);
+            closeModal('assignment-modal');
+            event.target.reset();
+            
+            // Refresh assignments view if currently active
+            if (document.getElementById('assignments').classList.contains('active')) {
+                loadAssignments();
+            }
+        }
+
+        // Grading Functions
+        function gradeSubmission(submissionId) {
+            const loadingElement = document.getElementById('grading-loading');
+            loadingElement.style.display = 'flex';
+            
+            setTimeout(() => {
+                dataManager.gradeSubmission(submissionId);
+                loadingElement.style.display = 'none';
+                loadSubmissions(); // Refresh view
+            }, 1500); // Simulate grading delay
+        }
+
+        async function gradeAllSubmissions() {
+            const loadingElement = document.getElementById('grading-loading');
+            loadingElement.style.display = 'flex';
+            
+            await dataManager.gradeAllSubmissions();
+            
+            loadingElement.style.display = 'none';
+            loadSubmissions(); // Refresh view
+        }
+
+        function viewSubmission(submissionId) {
+            const submission = dataManager.submissions.find(s => s.id === submissionId);
+            const student = dataManager.students.find(s => s.id === submission.studentId);
+            const assignment = dataManager.assignments.find(a => a.id === submission.assignmentId);
+            
+            if (!submission || !student || !assignment) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 800px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">📄 Submission Details</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div style="margin-bottom: 2rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div><strong>Student:</strong> ${student.name}</div>
+                            <div><strong>Assignment:</strong> ${assignment.title}</div>
+                            <div><strong>Course:</strong> ${assignment.course}</div>
+                            <div><strong>Submitted:</strong> ${submission.submissionDate.toLocaleDateString()}</div>
+                        </div>
+                        
+                        <div class="submission-content">
+${submission.content}
+                        </div>
+                        
+                        ${submission.graded ? `
+                            <div class="feedback-box">
+                                <h4 style="color: var(--text-primary); margin-bottom: 1rem;">
+                                    📊 Grade: <span class="score-display ${getScoreClass(submission.score, assignment.maxScore)}">${submission.score.toFixed(1)}/${assignment.maxScore}</span>
+                                </h4>
+                                <pre style="white-space: pre-wrap; font-family: inherit; margin: 0;">${submission.feedback}</pre>
+                            </div>
+                        ` : '<div class="feedback-box"><p>⏳ This submission has not been graded yet.</p></div>'}
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        ${!submission.graded ? `<button class="btn btn-primary" onclick="gradeSubmission('${submission.id}'); this.closest('.modal').remove();">✅ Grade Now</button>` : ''}
+                        <button class="btn btn-outline" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Grade Book Functions
+        function loadGradeBook() {
+            loadAssignmentWeights();
+            loadFinalGrades();
+        }
+
+        function loadAssignmentWeights() {
+            const container = document.getElementById('assignment-weights-list');
+            container.innerHTML = '';
+
+            if (dataManager.assignments.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        No assignments available. Create assignments first to set up grade calculations.
+                    </div>
+                `;
+                return;
+            }
+
+            dataManager.assignments.forEach(assignment => {
+                const weightCard = document.createElement('div');
+                weightCard.className = 'item';
+                weightCard.innerHTML = `
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">📝 ${assignment.title}</div>
+                            <div class="item-meta">
+                                ⚖️ Weight: ${(assignment.weight * 100).toFixed(0)}% • 
+                                📊 Curve: ${assignment.curveType.replace('_', ' ')} • 
+                                🎯 Max Score: ${assignment.maxScore}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-outline" onclick="editAssignmentSettings('${assignment.id}')">
+                                ⚙️ Edit Settings
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(weightCard);
+            });
+        }
+
+        function loadFinalGrades() {
+            const container = document.getElementById('final-grades-list');
+            container.innerHTML = '';
+
+            if (dataManager.students.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        No students enrolled. Add students to see final grades.
+                    </div>
+                `;
+                return;
+            }
+
+            dataManager.students.forEach(student => {
+                const breakdown = GradeCalculationEngine.getGradeBreakdown(
+                    student.id, dataManager.assignments, dataManager.submissions, dataManager.grades
+                );
+
+                const gradeCard = document.createElement('div');
+                gradeCard.className = 'item';
+                
+                const finalGradeDisplay = breakdown.finalPercentage 
+                    ? `${breakdown.finalPercentage.toFixed(1)}% (${breakdown.letterGrade}) - GPA: ${breakdown.gpa.toFixed(2)}`
+                    : 'No grades yet';
+
+                gradeCard.innerHTML = `
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">👤 ${student.name}</div>
+                            <div class="item-meta">
+                                🎓 Final Grade: <strong style="color: var(--text-primary);">${finalGradeDisplay}</strong><br>
+                                📚 Course: ${student.course}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="viewStudentBreakdown('${student.id}')">
+                                📊 View Breakdown
+                            </button>
+                            <button class="btn btn-outline" onclick="addGradeForStudent('${student.id}')">
+                                ➕ Add Grade
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(gradeCard);
+            });
+        }
+
+        function viewStudentBreakdown(studentId) {
+            const student = dataManager.students.find(s => s.id === studentId);
+            const breakdown = GradeCalculationEngine.getGradeBreakdown(
+                studentId, dataManager.assignments, dataManager.submissions, dataManager.grades
+            );
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 900px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">📊 Grade Breakdown - ${student.name}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div style="margin-bottom: 2rem;">
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">🎓 Final Grade Summary</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div style="text-align: center; padding: 1rem; background: var(--primary-dark); border-radius: 8px;">
+                                    <div style="font-size: 2rem; color: var(--text-primary); font-weight: bold;">
+                                        ${breakdown.finalPercentage ? breakdown.finalPercentage.toFixed(1) : 'N/A'}%
+                                    </div>
+                                    <div style="color: var(--text-secondary);">Final Percentage</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: var(--primary-dark); border-radius: 8px;">
+                                    <div style="font-size: 2rem; color: var(--text-primary); font-weight: bold;">
+                                        ${breakdown.letterGrade || 'N/A'}
+                                    </div>
+                                    <div style="color: var(--text-secondary);">Letter Grade</div>
+                                </div>
+                                <div style="text-align: center; padding: 1rem; background: var(--primary-dark); border-radius: 8px;">
+                                    <div style="font-size: 2rem; color: var(--text-primary); font-weight: bold;">
+                                        ${breakdown.gpa ? breakdown.gpa.toFixed(2) : 'N/A'}
+                                    </div>
+                                    <div style="color: var(--text-secondary);">GPA Points</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">📋 Assignment Breakdown</h4>
+                            ${breakdown.assignments.length > 0 ? breakdown.assignments.map(assignment => `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--primary-dark); border-radius: 8px; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--text-primary);">${assignment.title}</div>
+                                        <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                                            Raw: ${assignment.rawScore}/${assignment.maxScore} → 
+                                            Curved: ${assignment.curvedScore.toFixed(1)}/${assignment.maxScore} 
+                                            (${assignment.percentage.toFixed(1)}%)
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: 600; color: var(--text-primary);">
+                                            ${(assignment.weight * 100).toFixed(0)}% weight
+                                        </div>
+                                        <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                                            Contributes: ${assignment.contribution.toFixed(1)} points
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('') : '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No graded assignments yet</div>'}
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button class="btn btn-outline" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function editAssignmentSettings(assignmentId) {
+            const assignment = dataManager.assignments.find(a => a.id === assignmentId);
+            if (!assignment) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">⚙️ Assignment Settings - ${assignment.title}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <form onsubmit="updateAssignmentSettings(event, '${assignmentId}')">
+                        <div class="form-group">
+                            <label class="form-label">⚖️ Assignment Weight (as decimal)</label>
+                            <input type="number" class="form-input" name="weight" step="0.1" min="0" max="5" 
+                                   value="${assignment.weight}" required 
+                                   placeholder="1.0 = 100% weight">
+                            <small style="color: var(--text-secondary); font-size: 0.8rem;">
+                                Examples: 0.2 = 20%, 0.5 = 50%, 1.0 = 100%
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📊 Grade Curve Type</label>
+                            <select class="form-input form-select" name="curveType" onchange="toggleCurveParameters(this.value)">
+                                <option value="none" ${assignment.curveType === 'none' ? 'selected' : ''}>No Curve</option>
+                                <option value="linear" ${assignment.curveType === 'linear' ? 'selected' : ''}>Linear Adjustment</option>
+                                <option value="square_root" ${assignment.curveType === 'square_root' ? 'selected' : ''}>Square Root Curve</option>
+                                <option value="boost_low" ${assignment.curveType === 'boost_low' ? 'selected' : ''}>Boost Low Scores</option>
+                                <option value="bell_curve" ${assignment.curveType === 'bell_curve' ? 'selected' : ''}>Bell Curve</option>
+                            </select>
+                        </div>
+                        
+                        <div id="curve-parameters" style="display: ${assignment.curveType !== 'none' ? 'block' : 'none'};">
+                            <div class="form-group" id="linear-params" style="display: ${assignment.curveType === 'linear' ? 'block' : 'none'};">
+                                <label class="form-label">➕ Add Points</label>
+                                <input type="number" class="form-input" name="addPoints" 
+                                       value="${assignment.curveParameters.addPoints || 0}" min="0" max="50">
+                                <label class="form-label" style="margin-top: 1rem;">📈 Add Percentage</label>
+                                <input type="number" class="form-input" name="addPercentage" 
+                                       value="${assignment.curveParameters.addPercentage || 0}" min="0" max="100">
+                            </div>
+                            
+                            <div class="form-group" id="boost-params" style="display: ${assignment.curveType === 'boost_low' ? 'block' : 'none'};">
+                                <label class="form-label">🎯 Threshold (boost scores below this %)</label>
+                                <input type="number" class="form-input" name="threshold" 
+                                       value="${assignment.curveParameters.threshold || 70}" min="0" max="100">
+                            </div>
+                            
+                            <div class="form-group" id="bell-params" style="display: ${assignment.curveType === 'bell_curve' ? 'block' : 'none'};">
+                                <label class="form-label">🎯 Target Mean</label>
+                                <input type="number" class="form-input" name="targetMean" 
+                                       value="${assignment.curveParameters.targetMean || 85}" min="0" max="100">
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                            <button type="button" class="btn btn-outline" onclick="this.closest('.modal').remove()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                💾 Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function updateAssignmentSettings(event, assignmentId) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const assignment = dataManager.assignments.find(a => a.id === assignmentId);
+            
+            if (!assignment) return;
+
+            // Update weight
+            assignment.weight = parseFloat(formData.get('weight'));
+            
+            // Update curve type
+            assignment.curveType = formData.get('curveType');
+            
+            // Update curve parameters based on curve type
+            assignment.curveParameters = {};
+            if (assignment.curveType === 'linear') {
+                assignment.curveParameters.addPoints = parseInt(formData.get('addPoints')) || 0;
+                assignment.curveParameters.addPercentage = parseInt(formData.get('addPercentage')) || 0;
+            } else if (assignment.curveType === 'boost_low') {
+                assignment.curveParameters.threshold = parseInt(formData.get('threshold')) || 70;
+            } else if (assignment.curveType === 'bell_curve') {
+                assignment.curveParameters.targetMean = parseInt(formData.get('targetMean')) || 85;
+            }
+
+            dataManager.addActivity("⚙️", "Grade settings updated", `Modified weights and curves for ${assignment.title}`);
+            dataManager.updateDashboard();
+            
+            // Close modal and refresh views
+            event.target.closest('.modal').remove();
+            loadAssignments();
+            loadGradeBook();
+        }
+
+        function toggleCurveParameters(curveType) {
+            document.getElementById('curve-parameters').style.display = curveType !== 'none' ? 'block' : 'none';
+            document.getElementById('linear-params').style.display = curveType === 'linear' ? 'block' : 'none';
+            document.getElementById('boost-params').style.display = curveType === 'boost_low' ? 'block' : 'none';
+            document.getElementById('bell-params').style.display = curveType === 'bell_curve' ? 'block' : 'none';
+        }
+
+        function addGradeForStudent(studentId) {
+            const student = dataManager.students.find(s => s.id === studentId);
+            if (!student || dataManager.assignments.length === 0) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">➕ Add Grade - ${student.name}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <form onsubmit="saveStudentGrade(event, '${studentId}')">
+                        <div class="form-group">
+                            <label class="form-label">📝 Select Assignment</label>
+                            <select class="form-input form-select" name="assignmentId" required>
+                                <option value="">Choose assignment...</option>
+                                ${dataManager.assignments.map(assignment => 
+                                    `<option value="${assignment.id}">${assignment.title} (Max: ${assignment.maxScore})</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">🎯 Raw Score</label>
+                            <input type="number" class="form-input" name="score" step="0.1" min="0" required 
+                                   placeholder="Enter the raw score">
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                            <button type="button" class="btn btn-outline" onclick="this.closest('.modal').remove()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                💾 Save Grade
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function saveStudentGrade(event, studentId) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            
+            const assignmentId = formData.get('assignmentId');
+            const score = parseFloat(formData.get('score'));
+            const assignment = dataManager.assignments.find(a => a.id === assignmentId);
+            const student = dataManager.students.find(s => s.id === studentId);
+            
+            if (!assignment || !student || score > assignment.maxScore) {
+                alert('Invalid input. Please check the score and assignment.');
+                return;
+            }
+
+            const gradeKey = `${studentId}-${assignmentId}`;
+            dataManager.grades[gradeKey] = score;
+            
+            dataManager.addActivity("📝", "Grade added", `${student.name} scored ${score}/${assignment.maxScore} on ${assignment.title}`);
+            dataManager.updateDashboard();
+            
+            event.target.closest('.modal').remove();
+            loadGradeBook();
+        }
+
+        function showGradeSettings() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">⚙️ Grade Calculation Settings</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div style="margin-bottom: 2rem;">
+                        <div class="card" style="margin-bottom: 1rem;">
+                            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">📊 Available Curve Types</h4>
+                            <div style="color: var(--text-secondary); line-height: 1.8;">
+                                <div><strong>Linear:</strong> Add fixed points or percentage to all scores</div>
+                                <div><strong>Square Root:</strong> Helps very low scores more than high scores</div>
+                                <div><strong>Boost Low:</strong> Only boosts scores below a threshold</div>
+                                <div><strong>Bell Curve:</strong> Normalizes scores to a target distribution</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">📋 Weight Distribution</h4>
+                            <div style="color: var(--text-secondary);">
+                                Total Weight: ${dataManager.assignments.reduce((sum, a) => sum + a.weight, 0).toFixed(1)}<br>
+                                <small>Tip: Weights don't need to add up to 1.0 - they're automatically normalized</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button class="btn btn-outline" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Delete Functions
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student? This will also remove all their submissions and grades.')) {
+                // Remove student grades
+                Object.keys(dataManager.grades).forEach(gradeKey => {
+                    if (gradeKey.startsWith(studentId + '-')) {
+                        delete dataManager.grades[gradeKey];
+                    }
+                });
+                
+                dataManager.students = dataManager.students.filter(s => s.id !== studentId);
+                dataManager.submissions = dataManager.submissions.filter(s => s.studentId !== studentId);
+                dataManager.addActivity("🗑️", "Student deleted", "Student and associated submissions removed");
+                dataManager.updateDashboard();
+                loadStudents();
+            }
+        }
+
+        function deleteAssignment(assignmentId) {
+            if (confirm('Are you sure you want to delete this assignment? This will also remove all related submissions.')) {
+                dataManager.assignments = dataManager.assignments.filter(a => a.id !== assignmentId);
+                dataManager.submissions = dataManager.submissions.filter(s => s.assignmentId !== assignmentId);
+                dataManager.addActivity("🗑️", "Assignment deleted", "Assignment and related submissions removed");
+                dataManager.updateDashboard();
+                loadAssignments();
+            }
+        }
+
+        // Utility Functions
+        function getScoreClass(score, maxScore) {
+            const percentage = (score / maxScore) * 100;
+            if (percentage >= 90) return 'score-excellent';
+            if (percentage >= 80) return 'score-good';
+            if (percentage >= 70) return 'score-good';
+            return 'score-poor';
+        }
+
+        function simulateSubmission() {
+            if (dataManager.students.length === 0 || dataManager.assignments.length === 0) {
+                alert('Please add students and assignments first before simulating submissions.');
+                return;
+            }
+
+            const randomStudent = dataManager.students[Math.floor(Math.random() * dataManager.students.length)];
+            const randomAssignment = dataManager.assignments[Math.floor(Math.random() * dataManager.assignments.length)];
+            
+            const sampleContents = [
+                "This is a comprehensive analysis of the given topic. The research involved extensive literature review and data analysis. The findings suggest several important implications for future work in this field. The methodology employed was rigorous and appropriate for the research questions. The conclusions are well-supported by the evidence presented.",
+                "A detailed examination of the subject matter reveals complex relationships between various factors. Through systematic investigation and careful analysis, this work contributes to our understanding of the field. The approach taken here builds upon previous research while introducing novel perspectives and methodologies.",
+                "The implementation demonstrates effective problem-solving techniques and shows deep understanding of the underlying principles. The solution is efficient and well-documented, with clear explanations of the design choices made. Testing results confirm the correctness and performance of the approach."
+            ];
+
+            const randomContent = sampleContents[Math.floor(Math.random() * sampleContents.length)];
+            const submission = new Submission(randomStudent.id, randomAssignment.id, randomContent);
+            
+            dataManager.addSubmission(submission);
+            loadSubmissions();
+        }
+
+        // Event Listeners
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial content
+            loadStudents();
+        });
+    </script>
+</body>
+</html>
