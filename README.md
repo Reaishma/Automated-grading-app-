@@ -172,13 +172,14 @@ let keywords = ["algorithm", "function", "variable", "loop", "condition", "array
 ## 📱 Usage
 
 ### Adding Students
+
+![Assignment](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113821_1.jpg)
+
 1. Navigate to Students tab
 2. Use the interface to add new student profiles
 3. Provide name and email information
 
 ### Creating Assignments
-
-![Assignment](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113821_1.jpg)
 
 1. Go to Assignments tab
 2. Create new assignment with title, description, max score, and due date
