@@ -22,6 +22,9 @@ A comprehensive multi-platform application that provides automated grading capab
 - **Feedback Generation**: Intelligent feedback based on submission analysis
 
 ### User Interface
+
+![students](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113913_1.jpg)
+
 - **Dashboard**: Overview of students, assignments, and submissions with recent activity
 - **Students Tab**: List and manage all registered students
 - **Assignments Tab**: View and manage all course assignments
