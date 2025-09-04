@@ -21,6 +21,9 @@ A comprehensive multi-platform application that provides automated grading capab
 - **Automated Grading**: ML-powered grading engine that analyzes content quality
 - **Feedback Generation**: Intelligent feedback based on submission analysis
 
+![Analytics](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113935_1.jpg)
+
+
 ### User Interface
 
 ![students](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113913_1.jpg)
