@@ -188,6 +188,9 @@ let keywords = ["algorithm", "function", "variable", "loop", "condition", "array
 3. Assignments automatically appear in the grading interface
 
 ### Grading Process
+
+![Grading](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113836_1.jpg)
+
 1. Switch to Grading tab
 2. Review individual submissions
 3. Use "Grade This Submission" for individual grading
