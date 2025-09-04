@@ -26,8 +26,6 @@ A comprehensive multi-platform application that provides automated grading capab
 
 ### User Interface
 
-![students](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113913_1.jpg)
-
 - **Dashboard**: Overview of students, assignments, and submissions with recent activity
 - **Students Tab**: List and manage all registered students
 - **Assignments Tab**: View and manage all course assignments
@@ -66,6 +64,9 @@ A comprehensive multi-platform application that provides automated grading capab
 - **Submission**: Tracks student submissions with content and grading results
 
 ### Core Components
+
+![students](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113913_1.jpg)
+
 - **GradingEngine**: ML-powered singleton for automated grading
 - **GradingDataManager**: ObservableObject managing app state and data operations
 
