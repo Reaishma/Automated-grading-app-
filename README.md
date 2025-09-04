@@ -64,6 +64,9 @@ A comprehensive multi-platform application that provides automated grading capab
 - **GradingDataManager**: ObservableObject managing app state and data operations
 
 ### Grading Algorithm
+
+![Grading system](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113855_1.jpg)
+
 The grading engine analyzes submissions based on:
 - **Content Length**: Evaluates submission thoroughness (30% weight)
 - **Keyword Density**: Checks for relevant technical terms (40% weight)
