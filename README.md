@@ -181,6 +181,8 @@ let keywords = ["algorithm", "function", "variable", "loop", "condition", "array
 
 ### Creating Assignments
 
+![Assignments](https://github.com/Reaishma/Automated-grading-app-/blob/main/Screenshot_20250904-113828_1.jpg)
+
 1. Go to Assignments tab
 2. Create new assignment with title, description, max score, and due date
 3. Assignments automatically appear in the grading interface
