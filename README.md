@@ -12,6 +12,10 @@ A comprehensive multi-platform application that provides automated grading capab
 # 🚀 Live Demo 
   **View live** https://reaishma.github.io/Automated-grading-app-/
 
+## Developer🧑‍💻
+
+**Reaishma N**
+ 
 ## 📱 Features
 
 ### Core Functionality
@@ -118,7 +122,7 @@ flutter pub get
 flutter run
 ```
 
-### Running in Replit
+### Running 
 ```bash
 # Swift (command-line testing)
 swift main.swift
